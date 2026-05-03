@@ -1,51 +1,259 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+  <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ลงทะเบียนเข้าร่วมกิจกรรม - SURIN3 BIKE</title>
   
+  <!-- CSS Framework & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  
+  <!-- Flatpickr (สำหรับปฏิทิน พ.ศ.) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
-    body { font-family: 'Sarabun', sans-serif; background-color: #f4f6f9; color: #333; }
-    .header-banner { background: linear-gradient(135deg, #002244 0%, #004080 100%); color: white; padding: 40px 0; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; position: relative; }
-    .form-container { background: white; border-radius: 12px; padding: 35px; box-shadow: 0 8px 30px rgba(0,0,0,0.08); margin-bottom: 40px; border-top: 5px solid #004080; }
-    .section-title { font-weight: 700; color: #004080; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; margin-bottom: 25px; margin-top: 30px; }
-    .form-label { font-weight: 600; color: #444; }
-    .form-control, .form-select { border: 1px solid #ced4da; border-radius: 8px; padding: 10px 15px; }
-    .form-control:focus, .form-select:focus { border-color: #004080; box-shadow: 0 0 0 0.25rem rgba(0, 64, 128, 0.1); }
-    .consent-box { background-color: #f8fbff; border: 2px solid #004080; border-radius: 12px; padding: 25px; margin-top: 30px; display: flex; align-items: center; transition: all 0.3s; }
-    .consent-box:hover { background-color: #eef5ff; }
-    .consent-checkbox { transform: scale(1.8); margin-right: 20px; cursor: pointer; }
-    .btn-submit { background: linear-gradient(135deg, #004080 0%, #0059b3 100%); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: 700; border-radius: 50px; width: 100%; box-shadow: 0 4px 15px rgba(0, 64, 128, 0.3); transition: all 0.3s; }
-    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 64, 128, 0.4); color: white; }
-    .btn-check-status { background-color: #ff9900; color: #fff; font-weight: bold; border-radius: 50px; padding: 10px 25px; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: 0.3s; }
-    .btn-check-status:hover { background-color: #e68a00; color: white; }
-    .btn-back-home { background-color: #f8f9fa; color: #333; font-weight: bold; border-radius: 50px; padding: 10px 25px; text-decoration: none; border: 2px solid #ddd; transition: 0.3s; }
-    .btn-back-home:hover { background-color: #e2e6ea; }
-    .qr-box { background: #f8f9fa; border: 2px dashed #004080; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px; }
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap');
+    
+    body { 
+      font-family: 'Sarabun', sans-serif; 
+      background-color: #f4f6f9;
+      color: #333;
+    }
+    
+    .header-banner {
+      background: linear-gradient(135deg, #002244 0%, #004080 100%);
+      color: white;
+      padding: 40px 0;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .form-container {
+      background: white;
+      border-radius: 12px;
+      padding: 35px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      margin-bottom: 40px;
+      border-top: 5px solid #004080;
+    }
+
+    .section-title {
+      font-weight: 700;
+      color: #004080;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 10px;
+      margin-bottom: 25px;
+      margin-top: 30px;
+    }
+    
+    .form-label { 
+      font-weight: 600; 
+      color: #444; 
+    }
+    
+    .form-control, .form-select { 
+      border: 1px solid #ced4da; 
+      border-radius: 8px; 
+      padding: 10px 15px; 
+    }
+    
+    .form-control:focus, .form-select:focus { 
+      border-color: #004080; 
+      box-shadow: 0 0 0 0.25rem rgba(0, 64, 128, 0.1); 
+    }
+
+    .consent-box {
+      background-color: #f8fbff;
+      border: 2px solid #004080;
+      border-radius: 12px;
+      padding: 25px;
+      margin-top: 30px;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s;
+    }
+    
+    .consent-box:hover { 
+      background-color: #eef5ff; 
+    }
+    
+    .consent-checkbox { 
+      transform: scale(1.8); 
+      margin-right: 20px; 
+      cursor: pointer; 
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #004080 0%, #0059b3 100%);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border-radius: 50px;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(0, 64, 128, 0.3);
+      transition: all 0.3s;
+    }
+    
+    .btn-submit:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 6px 20px rgba(0, 64, 128, 0.4); 
+      color: white; 
+    }
+    
+    .btn-check-status {
+      background-color: #ff9900;
+      color: #fff;
+      font-weight: bold;
+      border-radius: 50px;
+      padding: 10px 25px;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: 0.3s;
+    }
+    
+    .btn-check-status:hover { 
+      background-color: #e68a00; 
+      color: white; 
+    }
+    
+    .qr-box {
+      background: #f8f9fa; 
+      border: 2px dashed #004080; 
+      border-radius: 12px; 
+      padding: 20px; 
+      text-align: center; 
+      margin-bottom: 20px;
+    }
+
+    /* 🚨 สไตล์สำหรับแผ่น BIB (จัดหน้าสวยงามและมีภาพพื้นหลัง) 🚨 */
+    #bibContainer { 
+      width: 500px; 
+      height: 350px; 
+      margin: 20px auto; 
+      position: relative; 
+      border: 8px solid #002244; 
+      overflow: hidden; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      display: none; 
+      text-align: left; 
+      border-radius: 12px;
+      background-color: #fff;
+    }
+    
+    .bib-custom-bg { 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+      z-index: 0; 
+    }
+    
+    .bib-overlay { 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(255, 255, 255, 0.6); 
+      z-index: 1; 
+    }
+
+    .bib-photo-frame { 
+      position: absolute; 
+      right: 25px; 
+      top: 65px; 
+      width: 110px; 
+      height: 140px; 
+      object-fit: cover; 
+      border: 4px solid #002244; 
+      background-color: #eee; 
+      z-index: 3; 
+      border-radius: 8px; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    
+    .bib-header { 
+      background: rgba(0, 34, 68, 0.95); 
+      color: white; 
+      padding: 10px; 
+      text-align: center; 
+      position: relative; 
+      z-index: 2; 
+      font-weight: bold; 
+      font-size: 1.2rem; 
+      letter-spacing: 1px;
+    }
+    
+    .bib-content { 
+      padding: 20px; 
+      position: relative; 
+      z-index: 2; 
+      width: 75%; 
+    }
+    
+    .bib-number { 
+      font-size: 75px; 
+      font-weight: 800; 
+      color: #002244; 
+      line-height: 1; 
+      margin-top: 10px; 
+      letter-spacing: -2px; 
+      text-shadow: 2px 2px 0px #ffffff, -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff; 
+    }
+    
+    .bib-name { 
+      font-size: 22px; 
+      font-weight: 700; 
+      color: #002244; 
+      margin-top: 10px; 
+      border-bottom: 3px solid #ff9900; 
+      display: inline-block; 
+      white-space: nowrap; 
+      overflow: hidden; 
+      text-overflow: ellipsis; 
+      max-width: 100%;
+      background: rgba(255, 255, 255, 0.7); 
+      padding: 0 8px; 
+      border-radius: 4px 4px 0 0;
+    }
+    
+    .bib-footer { 
+      position: absolute; 
+      bottom: 0; 
+      width: 100%; 
+      background: rgba(255, 153, 0, 0.95); 
+      color: #002244; 
+      padding: 6px; 
+      font-weight: bold; 
+      text-align: center; 
+      z-index: 4; 
+      font-size: 0.95rem;
+    }
+    
+    .bib-wrapper-scroll { 
+      overflow-x: auto; 
+      padding-bottom: 15px; 
+    } 
   </style>
 </head>
 <body>
 
 <div class="header-banner">
   <div class="container position-relative">
-    
-    <div class="d-flex justify-content-between mb-4">
-      <a href="index.html" class="btn-back-home">
-        <i class="fa-solid fa-home me-2"></i>หน้าแรก
-      </a>
-      <!-- 🚨 แก้ไขลิงก์หน้าเช็คสถานะ 🚨 -->
-      <a href="check.html" class="btn-check-status">
-        <i class="fa-solid fa-magnifying-glass me-2"></i>ตรวจสอบข้อมูล
-      </a>
+    <div class="d-flex justify-content-center justify-content-md-end mb-4">
+      <button type="button" class="btn-check-status border-0" data-bs-toggle="modal" data-bs-target="#checkBibModal">
+        <i class="fa-solid fa-id-card-clip me-2"></i>ตรวจสอบสถานะและรับ BIB
+      </button>
     </div>
-
     <h1 class="fw-bold mb-2"><i class="fa-solid fa-bicycle me-3"></i>SURIN3 BIKE FOR STUDENTS #1</h1>
     <h5 class="text-white-50">แบบฟอร์มลงทะเบียนเข้าร่วมกิจกรรม สำนักงานเขตพื้นที่การศึกษาประถมศึกษาสุรินทร์ เขต 3</h5>
   </div>
@@ -58,8 +266,10 @@
         
         <form id="regForm" onsubmit="event.preventDefault(); validateAndSubmit();">
           
+          <!-- ส่วนที่ 1: ข้อมูลส่วนบุคคล -->
           <h4 class="section-title"><i class="fa-solid fa-user me-2"></i>ส่วนที่ 1: ข้อมูลส่วนบุคคล</h4>
           <div class="row g-3">
+            
             <div class="col-md-3">
               <label class="form-label">คำนำหน้า <span class="text-danger">*</span></label>
               <select class="form-select req-field" id="prefix">
@@ -71,67 +281,85 @@
                 <option value="นางสาว">นางสาว</option>
               </select>
             </div>
+            
             <div class="col-md-4">
               <label class="form-label">ชื่อ <span class="text-danger">*</span></label>
               <input type="text" class="form-control req-field" id="firstName" placeholder="กรอกชื่อ">
             </div>
+            
             <div class="col-md-5">
               <label class="form-label">นามสกุล <span class="text-danger">*</span></label>
               <input type="text" class="form-control req-field" id="lastName" placeholder="กรอกนามสกุล">
             </div>
+            
             <div class="col-md-4">
               <label class="form-label">วัน/เดือน/ปีเกิด <span class="text-danger">*</span></label>
               <input type="text" class="form-control req-field" id="birthDate" placeholder="คลิกเพื่อเลือกวันที่">
             </div>
+            
             <div class="col-md-4">
               <label class="form-label">อายุ (ปี)</label>
               <input type="text" class="form-control bg-light" id="ageYears" readonly>
             </div>
+            
             <div class="col-md-4">
               <label class="form-label">อายุ (เดือน)</label>
               <input type="text" class="form-control bg-light" id="ageMonths" readonly>
             </div>
+
             <div class="col-md-6">
               <label class="form-label">เลขประจำตัวประชาชน 13 หลัก <span class="text-danger">*</span></label>
               <input type="text" class="form-control req-field" id="idCard" maxlength="13" placeholder="กรอกตัวเลข 13 หลักติดกัน">
               <small class="text-muted" id="idAlert"></small>
             </div>
+            
             <div class="col-md-6">
               <label class="form-label">เบอร์โทรศัพท์มือถือ <span class="text-danger">*</span></label>
               <input type="tel" class="form-control req-field" id="phone" maxlength="10" placeholder="08xxxxxxxx">
             </div>
+            
           </div>
 
+          <!-- ส่วนที่ 2: ที่อยู่ติดต่อ -->
           <h4 class="section-title"><i class="fa-solid fa-house-chimney me-2"></i>ส่วนที่ 2: ข้อมูลที่อยู่ติดต่อ</h4>
           <div class="row g-3">
+            
             <div class="col-md-3">
               <label class="form-label">บ้านเลขที่ <span class="text-danger">*</span></label>
               <input type="text" class="form-control req-field" id="houseNo" placeholder="หากไม่มีให้ใส่ -">
             </div>
+            
             <div class="col-md-3">
               <label class="form-label">หมู่ที่ <span class="text-danger">*</span></label>
               <input type="text" class="form-control req-field" id="moo" placeholder="หากไม่มีให้ใส่ -">
             </div>
+            
             <div class="col-md-6">
               <label class="form-label">ถนน/ตรอก/ซอย <span class="text-danger">*</span></label>
               <input type="text" class="form-control req-field" id="street" placeholder="หากไม่มีให้ใส่ -">
             </div>
+            
             <div class="col-md-4">
               <label class="form-label">ตำบล/แขวง <span class="text-danger">*</span></label>
               <input type="text" class="form-control req-field" id="subDistrict">
             </div>
+            
             <div class="col-md-4">
               <label class="form-label">อำเภอ/เขต <span class="text-danger">*</span></label>
               <input type="text" class="form-control req-field" id="district">
             </div>
+            
             <div class="col-md-4">
               <label class="form-label">จังหวัด <span class="text-danger">*</span></label>
               <input type="text" class="form-control req-field" id="province" value="สุรินทร์">
             </div>
+            
           </div>
 
+          <!-- ส่วนที่ 3: ข้อมูลฉุกเฉินและสุขภาพ -->
           <h4 class="section-title"><i class="fa-solid fa-heart-pulse me-2"></i>ส่วนที่ 3: ข้อมูลติดต่อฉุกเฉินและสุขภาพ</h4>
           <div class="row g-3">
+            
             <div class="col-12">
               <label class="form-label fw-bold text-danger">ท่านมีโรคประจำตัวหรือแพ้ยาหรือไม่? <span class="text-danger">*</span></label>
               <div class="p-3 border rounded bg-light">
@@ -146,22 +374,28 @@
                 <input type="text" id="medicalInfo" class="form-control d-none mt-2 req-field" value="ไม่มี" placeholder="ระบุโรคประจำตัว หรือ ยาที่แพ้ เช่น หอบหืด, แพ้เพนิซิลลิน">
               </div>
             </div>
+            
             <div class="col-md-4">
               <label class="form-label">ชื่อผู้ติดต่อฉุกเฉิน <span class="text-danger">*</span></label>
               <input type="text" class="form-control req-field" id="emergencyName" placeholder="ชื่อ-นามสกุล">
             </div>
+            
             <div class="col-md-4">
               <label class="form-label">ความสัมพันธ์ <span class="text-danger">*</span></label>
               <input type="text" class="form-control req-field" id="emergencyRelation" placeholder="เช่น บิดา, มารดา, พี่น้อง">
             </div>
+            
             <div class="col-md-4">
               <label class="form-label">เบอร์โทรติดต่อฉุกเฉิน <span class="text-danger">*</span></label>
               <input type="tel" class="form-control req-field" id="emergencyPhone" maxlength="10">
             </div>
+            
           </div>
 
+          <!-- ส่วนที่ 4: ประเภทกิจกรรมและเสื้อ -->
           <h4 class="section-title"><i class="fa-solid fa-shirt me-2"></i>ส่วนที่ 4: ประเภทกิจกรรมและเสื้อ</h4>
           <div class="row g-3">
+            
             <div class="col-md-6">
               <label class="form-label">ประเภทที่สมัคร <span class="text-danger">*</span></label>
               <select class="form-select req-field" id="eventType" onchange="handleEventTypeChange()">
@@ -171,6 +405,7 @@
                 <option value="เข้าร่วมฟรี (ไม่มีค่าใช้จ่าย/ไม่รับเสื้อ)">เข้าร่วมฟรี (ไม่มีค่าใช้จ่าย/ไม่รับเสื้อ)</option>
               </select>
             </div>
+            
             <div class="col-md-6">
               <label class="form-label">ไซส์เสื้อ <span class="text-danger">*</span></label>
               <select class="form-select req-field" id="shirtSize">
@@ -188,22 +423,28 @@
                 <option value="ไม่รับเสื้อ" class="text-danger">ไม่รับเสื้อ (เฉพาะผู้สมัครฟรี)</option>
               </select>
             </div>
+            
             <div class="col-12 text-center mt-3" id="shirtImageContainer" style="display: none;">
               <p class="fw-bold text-primary mb-2">ตัวอย่างแบบเสื้อ</p>
               <img id="shirtPreview" src="" alt="แบบเสื้อ" class="img-fluid border border-3 border-primary rounded shadow-sm" style="max-height: 250px;">
             </div>
+            
           </div>
 
+          <!-- ส่วนที่ 5: อัปโหลดเอกสาร -->
           <h4 class="section-title"><i class="fa-solid fa-file-arrow-up me-2"></i>ส่วนที่ 5: อัปโหลดเอกสาร</h4>
           <div class="row g-3">
+            
             <div class="col-md-6">
               <label class="form-label">รูปถ่ายหน้าตรงผู้สมัคร <span class="text-danger">*</span></label>
               <input type="file" class="form-control req-field" id="profileFile" accept="image/*">
               <small class="text-muted d-block mt-1">ใช้สำหรับทำ E-Ticket (ระบบจะบีบอัดขนาดให้อัตโนมัติ)</small>
             </div>
+            
             <div class="col-md-6" id="paymentSection">
               <div class="qr-box">
                 <h6 class="fw-bold text-primary mb-3"><i class="fa-solid fa-qrcode me-2"></i>สแกนเพื่อชำระเงินค่าลงทะเบียน</h6>
+                <!-- 🔴 นำลิงก์รูป QR Code สพป.สุรินทร์ เขต 3 มาใส่ตรงนี้ -->
                 <img src="https://placehold.co/200x200?text=QR+Code" alt="QR Code ชำระเงิน" style="width: 150px; max-width: 100%; border-radius: 8px;">
                 <div class="mt-2 text-dark small fw-bold">
                   ธนาคาร: กรุงไทย<br>
@@ -214,15 +455,19 @@
               <label class="form-label">อัปโหลดสลิปการโอนเงิน <span class="text-danger" id="slipRequireStar">*</span></label>
               <input type="file" class="form-control req-field" id="slipFile" accept="image/*">
             </div>
+            
           </div>
 
+          <!-- ส่วนที่ 6: การยินยอม -->
           <div class="consent-box">
             <input type="checkbox" class="consent-checkbox" id="consent">
             <div>
               <label for="consent" class="fw-bold text-dark" style="cursor: pointer; font-size: 1.1rem;">
                 ข้าพเจ้ารับทราบและยินยอมเงื่อนไขการเข้าร่วมกิจกรรม
               </label>
-              <p class="mb-0 text-muted small mt-1">ข้าพเจ้ายืนยันว่าข้อมูลข้างต้นเป็นความจริงทุกประการ และยินยอมให้ผู้จัดงานใช้ภาพถ่ายหรือวิดีโอเพื่อการประชาสัมพันธ์ได้</p>
+              <p class="mb-0 text-muted small mt-1">
+                ข้าพเจ้ายืนยันว่าข้อมูลข้างต้นเป็นความจริงทุกประการ และยินยอมให้ผู้จัดงานใช้ภาพถ่ายหรือวิดีโอเพื่อการประชาสัมพันธ์ได้
+              </p>
             </div>
           </div>
 
@@ -231,113 +476,218 @@
               <i class="fa-solid fa-paper-plane me-2"></i> ยืนยันการลงทะเบียน
             </button>
           </div>
-
+          
         </form>
       </div>
     </div>
   </div>
 </div>
 
+<!-- 🚨 หน้าต่าง Modal สำหรับตรวจสอบสถานะและรับ BIB 🚨 -->
+<div class="modal fade" id="checkBibModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold"><i class="fa-solid fa-id-card-clip me-2"></i>ตรวจสอบสถานะและดาวน์โหลด BIB</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center p-4">
+        
+        <div class="input-group mb-4 shadow-sm" style="max-width: 500px; margin: 0 auto;">
+          <input type="text" id="searchBibId" class="form-control form-control-lg text-center" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" maxlength="13">
+          <button class="btn btn-warning fw-bold px-4" onclick="searchBibData()" id="searchBibBtn">ค้นหา</button>
+        </div>
+
+        <div class="bib-wrapper-scroll">
+          <div id="bibContainer">
+            <!-- 🚨 รูปพื้นหลังลายปราสาทสีฟ้าของคุณนคร 🚨 -->
+            <img class="bib-custom-bg" src="https://i.ibb.co/WWHLYdmV/S-20406279-01.jpg" alt="BIB Background">
+            
+            <div class="bib-overlay"></div>
+            <img id="resPhoto" class="bib-photo-frame" src="">
+            
+            <div class="bib-header">SURIN3 BIKE FOR STUDENTS #1</div>
+            <div class="bib-content">
+              <div class="text-dark small fw-bold">RACE NUMBER</div>
+              <div class="bib-number" id="resBib">-</div>
+              <div class="bib-name" id="resName">-</div>
+              <div class="mt-3">
+                <span class="badge bg-dark" id="resType">-</span>
+                <span class="badge bg-primary" id="resSize">-</span>
+              </div>
+            </div>
+            <div class="bib-footer">สำนักงานเขตพื้นที่การศึกษาประถมศึกษาสุรินทร์ เขต 3</div>
+          </div>
+        </div>
+
+        <div id="actionButtons" style="display: none;" class="mt-4">
+          <button class="btn btn-success btn-lg px-5 rounded-pill shadow" onclick="downloadBIB()">
+            <i class="fa-solid fa-download me-2"></i>บันทึกแผ่น BIB (Save Image)
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
-  // 🚨 ประกาศตัวแปรเชื่อมโยง API ที่คุณนครสร้างไว้ 🚨
+  // 🚨 ลิงก์ API ของคุณนคร 🚨
   const API_URL = "https://script.google.com/macros/s/AKfycbwwQNmRdCNc5RX_Odpk2fjs_F8GaLzSI7Ysb5MuCwKMEuX6WXQTz5MkzHiVHcdw_AoV/exec";
 
-  // ตั้งค่าปฏิทิน พ.ศ.
-  flatpickr("#birthDate", {
-    locale: "th", dateFormat: "d/m/Y", maxDate: "today", disableMobile: "true",
+  // ตั้งค่า Flatpickr (ระบบ พ.ศ. 100%)
+  flatpickr("#birthDate", { 
+    locale: "th", 
+    dateFormat: "d/m/Y", 
+    maxDate: "today", 
+    disableMobile: "true",
+    
+    onReady: function(selectedDates, dateStr, instance) {
+      if(instance.currentYearElement) {
+        instance.currentYearElement.value = parseInt(instance.currentYear) + 543;
+      }
+    },
+    onMonthChange: function(selectedDates, dateStr, instance) {
+      if(instance.currentYearElement) {
+        instance.currentYearElement.value = parseInt(instance.currentYear) + 543;
+      }
+    },
+    onYearChange: function(selectedDates, dateStr, instance) {
+      if(instance.currentYearElement) {
+        instance.currentYearElement.value = parseInt(instance.currentYear) + 543;
+      }
+    },
     onChange: function(selectedDates, dateStr, instance) {
       if (selectedDates.length > 0) {
         let d = selectedDates[0];
-        let yearBE = d.getFullYear() + 543;
-        let display = ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth() + 1)).slice(-2) + "/" + yearBE;
-        instance.input.value = display;
+        instance.input.value = ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth() + 1)).slice(-2) + "/" + (d.getFullYear() + 543);
         
-        let today = new Date();
-        let ageY = today.getFullYear() - d.getFullYear();
+        let today = new Date(); 
+        let ageY = today.getFullYear() - d.getFullYear(); 
         let ageM = today.getMonth() - d.getMonth();
-        if (ageM < 0 || (ageM === 0 && today.getDate() < d.getDate())) {
-            ageY--; ageM += 12;
+        if (ageM < 0 || (ageM === 0 && today.getDate() < d.getDate())) { 
+          ageY--; 
+          ageM += 12; 
         }
-        document.getElementById('ageYears').value = ageY;
+        document.getElementById('ageYears').value = ageY; 
         document.getElementById('ageMonths').value = ageM;
       }
     }
   });
 
+  // จัดการช่องระบุโรคประจำตัว
   function toggleHealthInput() {
-    const isYes = document.getElementById('healthYes').checked;
     const input = document.getElementById('medicalInfo');
-    if (isYes) {
-      input.classList.remove('d-none'); input.value = ''; input.focus();
-    } else {
-      input.classList.add('d-none'); input.value = 'ไม่มี';
+    if (document.getElementById('healthYes').checked) { 
+      input.classList.remove('d-none'); 
+      input.value = ''; 
+      input.focus(); 
+    } else { 
+      input.classList.add('d-none'); 
+      input.value = 'ไม่มี'; 
     }
   }
 
+  // ฟังก์ชันตรวจสอบเลขบัตรประชาชน
   function checkThaiID(id) {
-    if (id.length != 13) return false;
+    if (id.length != 13) return false; 
     let sum = 0;
-    for (let i = 0; i < 12; i++) { sum += parseFloat(id.charAt(i)) * (13 - i); }
-    if ((11 - sum % 11) % 10 != parseFloat(id.charAt(12))) return false;
-    return true;
+    for (let i = 0; i < 12; i++) { 
+      sum += parseFloat(id.charAt(i)) * (13 - i); 
+    }
+    return ((11 - sum % 11) % 10 == parseFloat(id.charAt(12)));
   }
 
+  // ตรวจสอบเลขบัตรทันทีที่พิมพ์
   document.getElementById('idCard').addEventListener('input', function() {
-    const val = this.value;
+    const val = this.value; 
     const alertBox = document.getElementById('idAlert');
-    if(val.length === 13) {
-      if(checkThaiID(val)) {
-        alertBox.innerHTML = '<span class="text-success"><i class="fa-solid fa-check-circle"></i> รูปแบบถูกต้อง</span>';
+    if (val.length === 13) { 
+      if (checkThaiID(val)) {
+        alertBox.innerHTML = '<span class="text-success"><i class="fa-solid fa-check-circle"></i> ถูกต้อง</span>';
       } else {
         alertBox.innerHTML = '<span class="text-danger"><i class="fa-solid fa-times-circle"></i> เลขบัตรไม่ถูกต้อง</span>';
       }
-    } else { alertBox.innerHTML = ''; }
+    } else { 
+      alertBox.innerHTML = ''; 
+    }
   });
 
+  // จัดการตัวเลือกประเภทและแบบเสื้อ
   function handleEventTypeChange() {
     const type = document.getElementById('eventType').value;
-    const container = document.getElementById('shirtImageContainer');
+    const container = document.getElementById('shirtImageContainer'); 
     const img = document.getElementById('shirtPreview');
-    const shirtSize = document.getElementById('shirtSize');
+    const shirtSize = document.getElementById('shirtSize'); 
     const paymentSection = document.getElementById('paymentSection');
     const slipFile = document.getElementById('slipFile');
 
     if (type.includes('ฟรี')) {
-      container.style.display = 'none'; paymentSection.style.display = 'none';
-      slipFile.classList.remove('req-field'); slipFile.value = ''; 
-      shirtSize.value = 'ไม่รับเสื้อ'; shirtSize.disabled = true;
+      container.style.display = 'none'; 
+      paymentSection.style.display = 'none';
+      slipFile.classList.remove('req-field'); 
+      slipFile.value = ''; 
+      shirtSize.value = 'ไม่รับเสื้อ'; 
+      shirtSize.disabled = true;
     } else {
-      paymentSection.style.display = 'block'; slipFile.classList.add('req-field');
-      shirtSize.disabled = false; if (shirtSize.value === 'ไม่รับเสื้อ') shirtSize.value = ''; 
-      if (type.includes('VIP')) {
-        img.src = 'https://i.ibb.co/Ldmxn18J/S-20406277-0.jpg'; container.style.display = 'block';
-      } else if (type.includes('Standard') || type.includes('ทั่วไป')) {
-        img.src = 'https://i.ibb.co/q30ZnrmN/S-20406279-0.jpg'; container.style.display = 'block';
-      } else { container.style.display = 'none'; }
+      paymentSection.style.display = 'block'; 
+      slipFile.classList.add('req-field'); 
+      shirtSize.disabled = false;
+      
+      if (shirtSize.value === 'ไม่รับเสื้อ') {
+        shirtSize.value = ''; 
+      }
+      
+      if (type.includes('VIP')) { 
+        img.src = 'https://i.ibb.co/Ldmxn18J/S-20406277-0.jpg'; 
+        container.style.display = 'block'; 
+      } else if (type.includes('Standard') || type.includes('ทั่วไป')) { 
+        img.src = 'https://i.ibb.co/q30ZnrmN/S-20406279-0.jpg'; 
+        container.style.display = 'block'; 
+      } else { 
+        container.style.display = 'none'; 
+      }
     }
   }
 
+  // บีบอัดรูปภาพก่อนส่ง
   function compressImage(file, maxWidth, quality) {
     return new Promise((resolve, reject) => {
       if (!file) { resolve(null); return; }
-      const reader = new FileReader();
+      const reader = new FileReader(); 
       reader.readAsDataURL(file);
+      
       reader.onload = event => {
-        const img = new Image(); img.src = event.target.result;
+        const img = new Image(); 
+        img.src = event.target.result;
+        
         img.onload = () => {
-          const canvas = document.createElement('canvas');
-          let width = img.width, height = img.height;
-          if (width > maxWidth) { height = Math.round((height * maxWidth) / width); width = maxWidth; }
-          canvas.width = width; canvas.height = height;
-          const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
-          const dataUrl = canvas.toDataURL(file.type, quality);
-          resolve({ data: dataUrl.split(',')[1], mimeType: file.type, name: file.name });
+          const canvas = document.createElement('canvas'); 
+          let width = img.width; 
+          let height = img.height;
+          
+          if (width > maxWidth) { 
+            height = Math.round((height * maxWidth) / width); 
+            width = maxWidth; 
+          }
+          
+          canvas.width = width; 
+          canvas.height = height;
+          const ctx = canvas.getContext('2d'); 
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve({ 
+            data: canvas.toDataURL(file.type, quality).split(',')[1], 
+            mimeType: file.type, 
+            name: file.name 
+          });
         };
         img.onerror = error => reject(error);
       };
@@ -345,98 +695,165 @@
     });
   }
 
-  // 🚨 อัปเกรดระบบบันทึกให้ยิงเข้า API แทน google.script.run 🚨
+  // ส่งข้อมูลลงทะเบียน (รองรับ API บน GitHub)
   async function validateAndSubmit() {
-    if (!document.getElementById('consent').checked) {
-      Swal.fire({ icon: 'warning', title: 'แจ้งเตือน', text: 'กรุณากดติ๊กถูกในช่องรับทราบและยินยอมเงื่อนไข' }); return;
+    if (!document.getElementById('consent').checked) { 
+      Swal.fire({ icon: 'warning', title: 'แจ้งเตือน', text: 'กรุณากดรับทราบเงื่อนไข' }); 
+      return; 
     }
-
+    
     const idCard = document.getElementById('idCard').value;
-    if (!checkThaiID(idCard)) {
-      Swal.fire({ icon: 'error', title: 'ข้อมูลไม่ถูกต้อง', text: 'กรุณาตรวจสอบเลขบัตรประจำตัวประชาชน 13 หลัก' });
-      document.getElementById('idCard').focus(); return;
+    if (!checkThaiID(idCard)) { 
+      Swal.fire({ icon: 'error', title: 'ข้อมูลไม่ถูกต้อง', text: 'ตรวจสอบเลขบัตรอีกครั้ง' }); 
+      return; 
     }
 
     const reqFields = document.querySelectorAll('.req-field');
     for (let i = 0; i < reqFields.length; i++) {
-      if (!reqFields[i].value.trim()) {
-        Swal.fire({ icon: 'warning', title: 'ข้อมูลไม่ครบถ้วน', text: 'กรุณากรอกข้อมูลในช่องที่ว่างอยู่ให้ครบ' });
-        reqFields[i].focus(); return;
+      if (!reqFields[i].value.trim()) { 
+        Swal.fire({ icon: 'warning', title: 'ข้อมูลไม่ครบ', text: 'กรุณากรอกข้อมูลให้ครบ' }); 
+        reqFields[i].focus(); 
+        return; 
       }
     }
 
-    const btn = document.getElementById('submitBtn');
+    const btn = document.getElementById('submitBtn'); 
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังตรวจสอบข้อมูล...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังประมวลผล...';
 
     try {
-      // 1. เช็คเลขบัตรซ้ำผ่าน API
-      const checkRes = await fetch(`${API_URL}?action=checkDuplicate&idCard=${idCard}`);
-      const checkData = await checkRes.json();
-      
-      if (checkData.isDuplicate) {
-        Swal.fire({ icon: 'error', title: 'ลงทะเบียนซ้ำ!', text: 'เลขบัตรประชาชนนี้มีข้อมูลในระบบแล้ว' });
-        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i> ยืนยันการลงทะเบียน';
+      // ตรวจสอบข้อมูลซ้ำ
+      const dupRes = await fetch(`${API_URL}?action=checkDuplicate&idCard=${idCard}`);
+      const dupData = await dupRes.json();
+      if (dupData.isDuplicate) {
+        Swal.fire({ icon: 'error', title: 'ลงทะเบียนซ้ำ!', text: 'เลขบัตรนี้มีในระบบแล้ว' });
+        btn.disabled = false; 
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i> ยืนยันการลงทะเบียน'; 
         return;
       }
 
-      // 2. ถ้าไม่ซ้ำ เตรียมข้อมูล
-      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังประมวลผลรูปภาพ...';
+      // บีบอัดรูป
       const profileInput = document.getElementById('profileFile');
       const profileBase64 = profileInput.files.length > 0 ? await compressImage(profileInput.files[0], 800, 0.7) : null;
       const slipInput = document.getElementById('slipFile');
       const slipBase64 = slipInput.files.length > 0 ? await compressImage(slipInput.files[0], 800, 0.7) : null;
 
-      const payloadData = {
-        prefix: document.getElementById('prefix').value,
+      // รวมข้อมูล
+      const data = {
+        prefix: document.getElementById('prefix').value, 
         firstName: document.getElementById('firstName').value,
-        lastName: document.getElementById('lastName').value,
+        lastName: document.getElementById('lastName').value, 
         birthDate: document.getElementById('birthDate').value,
-        ageYears: document.getElementById('ageYears').value,
+        ageYears: document.getElementById('ageYears').value, 
         ageMonths: document.getElementById('ageMonths').value,
-        idCard: idCard,
-        phone: document.getElementById('phone').value,
+        idCard: idCard, 
+        phone: document.getElementById('phone').value, 
         houseNo: document.getElementById('houseNo').value,
-        moo: document.getElementById('moo').value,
+        moo: document.getElementById('moo').value, 
         street: document.getElementById('street').value,
-        subDistrict: document.getElementById('subDistrict').value,
+        subDistrict: document.getElementById('subDistrict').value, 
         district: document.getElementById('district').value,
-        province: document.getElementById('province').value,
+        province: document.getElementById('province').value, 
         medicalInfo: document.getElementById('medicalInfo').value,
-        emergencyName: document.getElementById('emergencyName').value,
+        emergencyName: document.getElementById('emergencyName').value, 
         emergencyRelation: document.getElementById('emergencyRelation').value,
-        emergencyPhone: document.getElementById('emergencyPhone').value,
+        emergencyPhone: document.getElementById('emergencyPhone').value, 
         eventType: document.getElementById('eventType').value,
-        shirtSize: document.getElementById('shirtSize').value,
-        profileFile: profileBase64,
+        shirtSize: document.getElementById('shirtSize').value, 
+        profileFile: profileBase64, 
         slipFile: slipBase64
       };
 
-      // 3. ส่งข้อมูลบันทึกลงระบบผ่าน API
-      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังบันทึกข้อมูลเข้าระบบ...';
-      const submitRes = await fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'register', data: payloadData })
+      // ส่งข้อมูลไปยัง API
+      const regRes = await fetch(API_URL, { 
+        method: 'POST', 
+        body: JSON.stringify({ action: 'register', data: data }) 
       });
-      const submitResult = await submitRes.json();
+      const regData = await regRes.json();
 
-      if(submitResult.status === 'success') {
+      if (regData.status === 'success') {
         Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: 'บันทึกข้อมูลเรียบร้อยแล้ว' }).then(() => { 
           document.getElementById('regForm').reset(); 
           document.getElementById('shirtImageContainer').style.display = 'none'; 
           document.getElementById('paymentSection').style.display = 'block'; 
           document.getElementById('shirtSize').disabled = false; 
+          btn.disabled = false; 
+          btn.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i> ยืนยันการลงทะเบียน'; 
         });
       } else {
-        Swal.fire({ icon: 'error', title: 'ล้มเหลว', text: submitResult.message });
+        Swal.fire({ icon: 'error', title: 'ล้มเหลว', text: regData.message });
+        btn.disabled = false; 
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i> ยืนยันการลงทะเบียน';
       }
-      
     } catch(err) {
       Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: err.message });
+      btn.disabled = false; 
+      btn.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i> ยืนยันการลงทะเบียน';
+    }
+  }
+
+  // ฟังก์ชันค้นหาข้อมูลและแสดงรูป BIB
+  async function searchBibData() {
+    const id = document.getElementById('searchBibId').value.trim();
+    if (id.length !== 13) { 
+      Swal.fire('แจ้งเตือน', 'กรุณากรอกเลขบัตรให้ครบ 13 หลัก', 'warning'); 
+      return; 
+    }
+
+    const btn = document.getElementById('searchBibBtn'); 
+    btn.disabled = true; 
+    btn.innerText = 'กำลังค้นหา...';
+    
+    try {
+      const response = await fetch(`${API_URL}?action=checkStatus&search=${id}`);
+      const res = await response.json();
+
+      if (res.success && res.data) {
+        let d = res.data;
+        if (d.status.includes('ชำระ') || d.status.includes('เรียบร้อย')) {
+          document.getElementById('resBib').innerText = d.bib; 
+          document.getElementById('resName').innerText = d.name;
+          document.getElementById('resType').innerText = d.type; 
+          document.getElementById('resSize').innerText = 'Size: ' + d.size;
+          
+          let pUrl = d.profileUrl || "";
+          let driveIdMatch = pUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || pUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) || pUrl.match(/id=([a-zA-Z0-9_-]+)/);
+          
+          if (driveIdMatch && driveIdMatch[1]) {
+            document.getElementById('resPhoto').src = 'https://drive.google.com/thumbnail?id=' + driveIdMatch[1] + '&sz=w800';
+          } else {
+            document.getElementById('resPhoto').src = 'https://placehold.co/300x400?text=No+Photo';
+          }
+
+          document.getElementById('bibContainer').style.display = 'block';
+          document.getElementById('actionButtons').style.display = 'block';
+        } else {
+          Swal.fire('รอการตรวจสอบ', 'ข้อมูลอยู่ในระบบแล้ว กรุณารอเจ้าหน้าที่ตรวจสอบยอดชำระเงินก่อนจึงจะออก BIB ได้ครับ', 'info');
+          document.getElementById('bibContainer').style.display = 'none'; 
+          document.getElementById('actionButtons').style.display = 'none';
+        }
+      } else {
+        Swal.fire('ไม่พบข้อมูล', 'ไม่พบเลขบัตรนี้ในระบบลงทะเบียนครับ', 'error');
+        document.getElementById('bibContainer').style.display = 'none'; 
+        document.getElementById('actionButtons').style.display = 'none';
+      }
+    } catch(err) { 
+      Swal.fire('Error', 'ไม่สามารถเชื่อมต่อฐานข้อมูลได้ กรุณาตรวจสอบลิงก์ API', 'error'); 
     }
     
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i> ยืนยันการลงทะเบียน';
+    btn.disabled = false; 
+    btn.innerText = 'ค้นหา';
+  }
+
+  // ฟังก์ชันดาวน์โหลดภาพ BIB
+  function downloadBIB() {
+    const bib = document.getElementById('bibContainer');
+    html2canvas(bib, { useCORS: true, scale: 2 }).then(canvas => {
+      const link = document.createElement('a'); 
+      link.download = 'SURIN3_BIKE_BIB_' + document.getElementById('resBib').innerText + '.png';
+      link.href = canvas.toDataURL("image/png"); 
+      link.click();
+    });
   }
 </script>
 </body>
