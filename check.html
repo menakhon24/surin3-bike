@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ตรวจสอบสถานะ - SURIN3 BIKE</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Sarabun', sans-serif; background-color: #f4f6f9; color: #333; }
+    .header-banner { background: linear-gradient(135deg, #002244 0%, #004080 100%); color: white; padding: 40px 0; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; }
+    .search-card { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; padding: 30px; box-shadow: 0 8px 30px rgba(0,0,0,0.08); border-top: 5px solid #ff9900; }
+    .result-card { max-width: 600px; margin: 20px auto; background: white; border-radius: 12px; padding: 30px; box-shadow: 0 8px 30px rgba(0,0,0,0.08); display: none; }
+    .btn-search { background-color: #ff9900; color: white; font-weight: bold; padding: 12px 25px; transition: 0.3s; }
+    .btn-search:hover { background-color: #e68a00; color: white; }
+    .info-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #ddd; padding: 10px 0; }
+    .info-label { font-weight: 600; color: #666; }
+    .info-value { font-weight: 700; color: #004080; }
+  </style>
+</head>
+<body>
+
+<div class="header-banner">
+  <div class="container position-relative">
+    <div class="d-flex justify-content-start mb-3">
+      <a href="index.html" class="btn btn-light rounded-pill fw-bold"><i class="fa-solid fa-arrow-left me-2"></i>กลับหน้าแรก</a>
+    </div>
+    <h2 class="fw-bold mb-2"><i class="fa-solid fa-magnifying-glass me-2"></i>ตรวจสอบสถานะการลงทะเบียน</h2>
+    <h6 class="text-white-50">SURIN3 BIKE FOR STUDENTS #1</h6>
+  </div>
+</div>
+
+<div class="container pb-5">
+  <div class="search-card text-center">
+    <h5 class="fw-bold text-dark mb-4">กรุณากรอกเลขประจำตัวประชาชน 13 หลัก</h5>
+    <form onsubmit="event.preventDefault(); searchData();">
+      <div class="input-group mb-3">
+        <span class="input-group-text bg-light"><i class="fa-solid fa-id-card"></i></span>
+        <input type="text" id="searchId" class="form-control form-control-lg text-center fw-bold" placeholder="x-xxxx-xxxxx-xx-x" maxlength="13" required>
+      </div>
+      <button type="submit" class="btn btn-search w-100 rounded-pill" id="searchBtn">
+        <i class="fa-solid fa-search me-2"></i>ค้นหาข้อมูล
+      </button>
+    </form>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="text-center mb-4">
+      <h4 class="fw-bold text-success" id="resStatus"><i class="fa-solid fa-check-circle me-2"></i>พบข้อมูลการลงทะเบียน</h4>
+    </div>
+    
+    <div class="info-row"><span class="info-label">วันที่ลงทะเบียน</span><span class="info-value" id="rDate">-</span></div>
+    <div class="info-row"><span class="info-label">ชื่อ - นามสกุล</span><span class="info-value fs-5" id="rName">-</span></div>
+    <div class="info-row"><span class="info-label">หมายเลข BIB</span><span class="info-value text-danger fs-4" id="rBib">-</span></div>
+    <div class="info-row"><span class="info-label">ประเภทที่สมัคร</span><span class="info-value" id="rType">-</span></div>
+    <div class="info-row"><span class="info-label">ไซส์เสื้อ</span><span class="info-value" id="rSize">-</span></div>
+    <div class="info-row"><span class="info-label">สถานะการชำระเงิน</span><span class="info-value" id="rPayment">-</span></div>
+    <div class="info-row border-0"><span class="info-label">สถานะการรับเสื้อ</span><span class="info-value" id="rShirt">-</span></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbwwQNmRdCNc5RX_Odpk2fjs_F8GaLzSI7Ysb5MuCwKMEuX6WXQTz5MkzHiVHcdw_AoV/exec";
+
+  async function searchData() {
+    const searchId = document.getElementById('searchId').value.trim();
+    if(searchId.length !== 13) {
+      Swal.fire('ข้อมูลไม่ถูกต้อง', 'กรุณากรอกเลขประจำตัวประชาชนให้ครบ 13 หลัก', 'warning'); return;
+    }
+
+    const btn = document.getElementById('searchBtn');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังค้นหา...';
+    document.getElementById('resultCard').style.display = 'none';
+
+    try {
+      const response = await fetch(`${API_URL}?action=checkStatus&search=${searchId}`);
+      const res = await response.json();
+
+      if(res.success && res.data) {
+        let d = res.data;
+        document.getElementById('rDate').innerText = d.date;
+        document.getElementById('rName').innerText = d.name;
+        document.getElementById('rBib').innerText = d.bib;
+        document.getElementById('rType').innerText = d.type;
+        document.getElementById('rSize').innerText = d.size;
+        
+        let pStatus = `<span class="badge bg-warning text-dark"><i class="fa-solid fa-hourglass-half"></i> ${d.status}</span>`;
+        if(d.status.includes('ชำระ') || d.status.includes('เรียบร้อย')) pStatus = `<span class="badge bg-success"><i class="fa-solid fa-check"></i> ${d.status}</span>`;
+        else if(d.status.includes('ยกเลิก') || d.status.includes('ไม่ผ่าน')) pStatus = `<span class="badge bg-danger"><i class="fa-solid fa-xmark"></i> ${d.status}</span>`;
+        document.getElementById('rPayment').innerHTML = pStatus;
+
+        let sStatus = `<span class="badge bg-secondary"><i class="fa-solid fa-shirt"></i> ${d.shirtStatus}</span>`;
+        if(d.shirtStatus.includes('รับแล้ว')) sStatus = `<span class="badge bg-info text-dark"><i class="fa-solid fa-check"></i> ${d.shirtStatus}</span>`;
+        document.getElementById('rShirt').innerHTML = sStatus;
+
+        document.getElementById('resultCard').style.display = 'block';
+      } else {
+        Swal.fire({ icon: 'error', title: 'ไม่พบข้อมูล', text: 'ไม่พบข้อมูลผู้สมัครที่ตรงกับเลขบัตรประชาชนนี้ กรุณาตรวจสอบอีกครั้ง' });
+      }
+    } catch(err) {
+      Swal.fire('ข้อผิดพลาดเซิร์ฟเวอร์', err.message, 'error');
+    }
+    btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-search me-2"></i>ค้นหาข้อมูล';
+  }
+</script>
+</body>
+</html>

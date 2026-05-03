@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard ผู้ดูแลระบบ - SURIN3 BIKE</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Sarabun', sans-serif; background-color: #f4f6f9; color: #333; }
+    .navbar { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); padding: 15px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .navbar-brand { color: white; font-weight: 700; font-size: 1.5rem; }
+    .stat-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.3s; border-bottom: 4px solid #ccc; height: 100%; }
+    .stat-card:hover { transform: translateY(-5px); }
+    .stat-title { font-size: 0.85rem; color: #6c757d; font-weight: 600; text-transform: uppercase; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: #1e3a8a; margin-top: 5px; }
+    .table-container { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-top: 30px; }
+    .table th { background-color: #1e3a8a; color: white; font-weight: 600; padding: 15px 10px; border: none; }
+    .table td { vertical-align: middle; padding: 15px 10px; border-bottom: 1px solid #eef2f5; }
+    .btn-action { padding: 6px 12px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; margin-right: 5px; }
+    .modal-header { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; border-bottom: none; }
+    .slip-img { width: 100%; max-width: 400px; border-radius: 8px; border: 2px dashed #ccc; padding: 5px; cursor: pointer; transition: 0.3s; }
+    .slip-img:hover { border-color: #3b82f6; }
+    .size-box { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+    .size-badge { font-size: 1.1rem; width: 45px; height: 45px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; margin-right: 10px; }
+    .filter-select { border: 1px solid #e0e0e0; border-radius: 8px; padding: 8px 12px; font-size: 0.95rem; background-color: #f8f9fa; color: #333; font-weight: 500; }
+    @media print {
+      body { background-color: white; }
+      .navbar, .btn, .filter-select, #searchInput, .modal { display: none !important; }
+      .table-container { box-shadow: none; margin-top: 0; padding: 0; border: none; }
+      .stat-card { border: 1px solid #ddd; page-break-inside: avoid; }
+      * { color: #000 !important; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar d-flex justify-content-between align-items-center">
+  <div class="navbar-brand"><i class="fa-solid fa-bicycle me-2"></i> SURIN3 BIKE DASHBOARD</div>
+  <div class="d-flex align-items-center">
+    <div class="text-white me-3 d-none d-md-block" style="font-weight: 500; font-size: 0.9rem;">
+      <i class="fa-solid fa-user-circle me-1 text-warning"></i> ยินดีต้อนรับ: <span id="displayName" class="text-warning fw-bold">กำลังโหลด...</span>
+    </div>
+    <button class="btn btn-outline-light btn-sm rounded-pill px-3 me-2" onclick="loadData(true)"><i class="fa-solid fa-rotate-right me-1"></i> รีเฟรช</button>
+    <button class="btn btn-danger btn-sm rounded-pill px-3" onclick="logout()"><i class="fa-solid fa-right-from-bracket me-1"></i> ออกจากระบบ</button>
+  </div>
+</nav>
+
+<div class="container-fluid py-4 px-4">
+  <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-3 mb-4">
+    <div class="col"><div class="stat-card" style="border-bottom-color: #0d6efd;"><div class="stat-title"><i class="fa-solid fa-users text-primary me-2"></i>ผู้สมัครทั้งหมด</div><div class="stat-value" id="statTotal">0</div></div></div>
+    <div class="col"><div class="stat-card" style="border-bottom-color: #e83e8c;"><div class="stat-title"><i class="fa-solid fa-user-plus text-pink me-2" style="color: #e83e8c;"></i>ผู้สมัครวันนี้</div><div class="stat-value" id="statToday" style="color: #e83e8c;">0</div></div></div>
+    <div class="col"><div class="stat-card" style="border-bottom-color: #198754;"><div class="stat-title"><i class="fa-solid fa-check-circle text-success me-2"></i>ชำระเงินแล้ว</div><div class="stat-value text-success" id="statPaid">0</div></div></div>
+    <div class="col"><div class="stat-card" style="border-bottom-color: #ffc107;"><div class="stat-title"><i class="fa-solid fa-hourglass-half text-warning me-2"></i>รอตรวจสอบ</div><div class="stat-value text-warning" id="statPending">0</div></div></div>
+    <div class="col"><div class="stat-card" style="border-bottom-color: #0dcaf0;"><div class="stat-title"><i class="fa-solid fa-shirt text-info me-2"></i>รับเสื้อแล้ว</div><div class="stat-value text-info" id="statShirt">0</div></div></div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-6"><div class="stat-card bg-light" style="border-bottom-color: #6f42c1;"><div class="stat-title"><i class="fa-solid fa-sack-dollar text-purple me-2"></i>ยอดเงินโอนรวม (เฉพาะที่อนุมัติ)</div><div class="stat-value text-purple" id="statMoney" style="color: #6f42c1;">0 ฿</div></div></div>
+    <div class="col-md-6"><div class="stat-card bg-light" style="border-bottom-color: #fd7e14;"><div class="stat-title"><i class="fa-solid fa-chart-pie text-orange me-2"></i>แบ่งตามประเภท (ที่อนุมัติแล้ว)</div><div class="mt-2" style="font-size: 1.1rem; font-weight: bold; color: #fd7e14;">VIP: <span id="statVipCount">0</span> ท่าน | ทั่วไป: <span id="statNormalCount">0</span> ท่าน</div></div></div>
+  </div>
+
+  <div class="table-container mb-4">
+    <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-shirt me-2"></i>สรุปจำนวนไซส์เสื้อ (เฉพาะที่ชำระเงินแล้ว)</h5>
+    <div class="row" id="sizeSummaryContainer"></div>
+  </div>
+
+  <div class="table-container">
+    <div class="mb-4">
+      <h4 class="fw-bold text-dark mb-3"><i class="fa-solid fa-list-check me-2"></i>รายชื่อผู้ลงทะเบียน</h4>
+      <div class="row g-2 align-items-center">
+        <div class="col-md-2"><select id="filterStatus" class="form-select filter-select" onchange="filterTable()"><option value="">🏷️ แสดงทุกสถานะ</option><option value="ชำระเงินเรียบร้อย">ชำระเงินเรียบร้อย</option><option value="รอตรวจสอบ">รอตรวจสอบ</option><option value="ยกเลิก/ไม่ผ่าน">ยกเลิก/ไม่ผ่าน</option></select></div>
+        <div class="col-md-2"><select id="filterType" class="form-select filter-select" onchange="filterTable()"><option value="">🚲 แสดงทุกประเภท</option><option value="VIP">ประเภท VIP</option><option value="ทั่วไป">ประเภท ทั่วไป</option></select></div>
+        <div class="col-md-2"><select id="filterShirt" class="form-select filter-select" onchange="filterTable()"><option value="">👕 การรับเสื้อ</option><option value="รับเสื้อแล้ว">รับเสื้อแล้ว</option><option value="ยังไม่รับ">ยังไม่รับเสื้อ</option></select></div>
+        <div class="col-md-3"><div class="input-group"><span class="input-group-text bg-white text-muted border-end-0"><i class="fa-solid fa-search"></i></span><input type="text" id="searchInput" class="form-control border-start-0 ps-0" placeholder="ค้นหา ชื่อ, เบอร์, BIB..." onkeyup="filterTable()"></div></div>
+        <div class="col-md-3 d-flex gap-2"><button class="btn btn-success w-100 fw-bold shadow-sm" onclick="exportToExcel()"><i class="fa-solid fa-file-excel me-1"></i> Excel</button><button class="btn btn-danger w-100 fw-bold shadow-sm" onclick="exportToPDF()"><i class="fa-solid fa-file-pdf me-1"></i> PDF</button></div>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle bg-white" id="dataTable">
+        <thead><tr class="text-center"><th>วันที่สมัคร</th><th>สถานะ</th><th>BIB</th><th class="text-start">ชื่อ-นามสกุล</th><th>เบอร์โทรศัพท์</th><th>ประเภท</th><th>ไซส์</th><th>การรับเสื้อ</th><th>จัดการ</th></tr></thead>
+        <tbody id="tableBody" class="text-center"><tr><td colspan="9" class="text-center py-4"><span class="spinner-border text-primary me-2"></span>กำลังโหลดข้อมูล...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal ตรวจสอบ/แก้ไขข้อมูล -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header"><h5 class="modal-title fw-bold"><i class="fa-solid fa-user-pen me-2"></i>ตรวจสอบและแก้ไขข้อมูล</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body p-4 bg-light">
+        <input type="hidden" id="mRowIndex">
+        <div class="row bg-white p-3 rounded shadow-sm mb-3">
+          <div class="col-md-2 mb-2"><label class="form-label small text-muted">คำนำหน้า</label><input type="text" id="mPrefix" class="form-control bg-light" readonly></div>
+          <div class="col-md-5 mb-2"><label class="form-label small text-muted">ชื่อ</label><input type="text" id="mFname" class="form-control bg-light" readonly></div>
+          <div class="col-md-5 mb-2"><label class="form-label small text-muted">นามสกุล</label><input type="text" id="mLname" class="form-control bg-light" readonly></div>
+          <div class="col-md-6 mb-2"><label class="form-label small text-muted">ประเภท</label><input type="text" id="mType" class="form-control bg-light" readonly></div>
+          <div class="col-md-6 mb-2"><label class="form-label small text-muted">ไซส์เสื้อ</label><input type="text" id="mSize" class="form-control bg-light" readonly></div>
+          <div class="col-md-12 mb-2"><label class="form-label small text-muted">ยอดที่ต้องโอน</label><input type="text" id="mCost" class="form-control fw-bold text-success bg-light" readonly></div>
+        </div>
+        <div class="row bg-white p-3 rounded shadow-sm border border-primary">
+          <h6 class="fw-bold text-primary mb-3"><i class="fa-solid fa-gear me-2"></i>ส่วนจัดการโดยเจ้าหน้าที่</h6>
+          <div class="col-md-6 mb-3"><label class="form-label fw-bold small">สถานะการชำระเงิน</label><select id="mStatus" class="form-select border-primary fw-bold"><option value="รอตรวจสอบ">รอตรวจสอบ</option><option value="ชำระเงินเรียบร้อย">ชำระเงินเรียบร้อย (อนุมัติ)</option><option value="ยกเลิก/ไม่ผ่าน">ยกเลิก / ไม่ผ่าน</option></select></div>
+          <div class="col-md-6 mb-3"><label class="form-label fw-bold small">หมายเลข BIB</label><input type="text" id="mBib" class="form-control border-primary fw-bold text-primary" placeholder="รันให้อัตโนมัติถ้าปล่อยว่าง"></div>
+          <div class="col-md-6 mt-2"><label class="form-label fw-bold small text-info"><i class="fa-solid fa-shirt me-1"></i> การรับเสื้อ</label><select id="mShirtStatus" class="form-select border-info shadow-sm fw-bold"><option value="ยังไม่รับ">ยังไม่รับเสื้อ</option><option value="รับเสื้อแล้ว">รับเสื้อเรียบร้อยแล้ว</option></select></div>
+          <div class="col-md-6 mt-2"><label class="form-label fw-bold small text-danger"><i class="fa-solid fa-flag-checkered me-1"></i> การรายงานตัว</label><select id="mCheckInStatus" class="form-select border-danger shadow-sm fw-bold"><option value="ยังไม่รายงานตัว">ยังไม่รายงานตัว</option><option value="รายงานตัวแล้ว">รายงานตัวเรียบร้อยแล้ว</option></select></div>
+        </div>
+        <div class="row mt-4 text-center"><div class="col-12"><h6 class="fw-bold text-muted"><i class="fa-solid fa-receipt me-2"></i>หลักฐานการชำระเงิน</h6><img id="mSlipImage" src="" class="slip-img mt-2" onclick="viewFullImage(this.src)" onerror="this.src='https://placehold.co/400x400?text=No+Slip+Found';"></div></div>
+      </div>
+      <div class="modal-footer d-flex justify-content-between">
+        <button type="button" class="btn btn-danger rounded-pill px-4" onclick="deleteData()" id="btnDelete"><i class="fa-solid fa-trash me-2"></i> ลบข้อมูลนี้</button>
+        <div><button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">ปิดหน้าต่าง</button><button type="button" class="btn btn-primary rounded-pill px-4" onclick="saveData()" id="btnSave"><i class="fa-solid fa-floppy-disk me-2"></i> บันทึกข้อมูล</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbwwQNmRdCNc5RX_Odpk2fjs_F8GaLzSI7Ysb5MuCwKMEuX6WXQTz5MkzHiVHcdw_AoV/exec";
+  let tableData = []; let editModal;
+
+  window.onload = function() {
+    const userRole = sessionStorage.getItem('userRole');
+    
+    // ถ้าไม่มีข้อมูลล็อกอิน ให้เตะกลับไปหน้า login
+    if (!userRole) { window.location.href = "login.html"; return; }
+    
+    // แสดงชื่อและสิทธิ์บนแถบเมนู
+    document.getElementById('displayName').innerText = sessionStorage.getItem('userName') || 'ผู้ใช้งานระบบ';
+    
+    editModal = new bootstrap.Modal(document.getElementById('editModal'));
+    
+    // 🚨 ระบบควบคุมสิทธิ์การใช้งาน (Role-based Access Control) 🚨
+    if (userRole === 'Executive') {
+      // ผู้บริหาร: ดูได้อย่างเดียว (ซ่อนปุ่มลบ และปุ่มบันทึก)
+      document.getElementById('btnDelete').style.display = 'none';
+      document.getElementById('btnSave').style.display = 'none';
+      
+      // ปิดไม่ให้กรอกข้อมูลในช่องต่างๆ ด้วย
+      document.getElementById('mStatus').disabled = true;
+      document.getElementById('mBib').disabled = true;
+      document.getElementById('mShirtStatus').disabled = true;
+      document.getElementById('mCheckInStatus').disabled = true;
+      
+    } else if (userRole === 'Officer') {
+      // เจ้าหน้าที่: ตรวจสอบและบันทึกได้ แต่ (ซ่อนปุ่มลบ)
+      document.getElementById('btnDelete').style.display = 'none';
+    }
+    // ส่วน Admin จะไม่ถูกซ่อนอะไรเลย มองเห็นและใช้ได้ทุกปุ่มตามปกติครับ
+
+    loadData(); 
+  };
+
+  async function loadData(showToast = false) {
+    if (showToast) document.getElementById('tableBody').innerHTML = `<tr><td colspan="9" class="text-center py-4"><span class="spinner-border text-primary me-2"></span> กำลังรีเฟรชข้อมูล...</td></tr>`;
+    try {
+      const response = await fetch(API_URL + "?action=getDashboardData");
+      const parsedData = await response.json();
+      if (parsedData && parsedData.error) {
+        document.getElementById('tableBody').innerHTML = `<tr><td colspan="9" class="text-center py-4 text-danger fw-bold">พบข้อผิดพลาด: ${parsedData.error}</td></tr>`; return;
+      }
+      if (parsedData && parsedData.length > 1) {
+        tableData = parsedData; processData(parsedData);
+        if (showToast) Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'อัปเดตข้อมูลแล้ว', showConfirmButton: false, timer: 1500 });
+      } else {
+        document.getElementById('tableBody').innerHTML = `<tr><td colspan="9" class="text-center py-4 text-muted">ยังไม่มีข้อมูลผู้สมัครในระบบ</td></tr>`;
+      }
+    } catch(err) { document.getElementById('tableBody').innerHTML = `<tr><td colspan="9" class="text-center py-4 text-danger fw-bold">การเชื่อมต่อล้มเหลว: ${err.message}</td></tr>`; }
+  }
+
+  function processData(data) {
+    try {
+      let countTotal = 0, countToday = 0, countPaid = 0, countPending = 0, countShirt = 0;
+      let sumMoney = 0, vipCount = 0, normalCount = 0;
+      let sizeCount = { 'VIP': { '3S':0, '2S':0, 'S':0, 'M':0, 'L':0, 'XL':0, '2XL':0, '3XL':0, '4XL':0, '5XL':0 }, 'ทั่วไป': { '3S':0, '2S':0, 'S':0, 'M':0, 'L':0, 'XL':0, '2XL':0, '3XL':0, '4XL':0, '5XL':0 } };
+      let today = new Date(); let d = today.getDate(), m = today.getMonth() + 1, y = today.getFullYear(), yTh = y + 543;
+
+      for (let i = 1; i < data.length; i++) {
+        let row = data[i];
+        // เช็คชื่อเพื่อข้ามแถวผี (ตอนนี้ชื่ออยู่ Index 2)
+        let fnameCheck = (row[2] !== undefined && row[2] !== null) ? String(row[2]).trim() : "";
+        if (!row || !row[0] || String(row[0]).trim() === "" || fnameCheck === "") continue; 
+        
+        countTotal++;
+        
+        let isToday = false; let rawDate = String(row[0]).trim();
+        let parsedDate = new Date(rawDate);
+        if (!isNaN(parsedDate.getTime())) {
+            let rd = parsedDate.getDate(), rm = parsedDate.getMonth() + 1, ry = parsedDate.getFullYear();
+            if (rd === d && rm === m && (ry === y || ry === yTh)) isToday = true;
+        }
+        if (!isToday) {
+            let nums = rawDate.match(/\d+/g); 
+            if (nums && nums.length >= 3) {
+                let n1 = parseInt(nums[0]), n2 = parseInt(nums[1]), n3 = parseInt(nums[2]);
+                if (n1 === d && n2 === m && (n3 === y || n3 === yTh)) isToday = true;
+                else if (n1 === m && n2 === d && (n3 === y || n3 === yTh)) isToday = true;
+                else if ((n1 === y || n1 === yTh) && n2 === m && n3 === d) isToday = true;
+            }
+        }
+        if (isToday) countToday++;
+        
+        // 🚨 อัปเดต Index คอลัมน์ใหม่ทั้งหมด 🚨
+        let status = row[23] ? String(row[23]) : "";
+        let type = row[19] ? String(row[19]).toUpperCase() : "";
+        let sizeRaw = row[20] ? String(row[20]).toUpperCase().replace(/[\s\(\)]/g, '') : "";
+        
+        let mappedSize = null;
+        if (sizeRaw.includes('5XL')) mappedSize = '5XL'; else if (sizeRaw.includes('4XL')) mappedSize = '4XL'; else if (sizeRaw.includes('3XL') || sizeRaw.includes('XXXL')) mappedSize = '3XL'; else if (sizeRaw.includes('2XL') || sizeRaw.includes('XXL')) mappedSize = '2XL'; else if (sizeRaw.includes('XL')) mappedSize = 'XL'; else if (sizeRaw.includes('L')) mappedSize = 'L'; else if (sizeRaw.includes('M')) mappedSize = 'M'; else if (sizeRaw.includes('3S')) mappedSize = '3S'; else if (sizeRaw.includes('2S')) mappedSize = '2S'; else if (sizeRaw.includes('S')) mappedSize = 'S';
+        
+        let calculatedCost = (type.includes('VIP') || type.includes('วีไอพี')) ? 1000 : 500;
+        let shirtCheck = row[25] ? String(row[25]) : "";
+        let isPaid = status.includes('ชำระ') || status.includes('เรียบร้อย') || status.includes('อนุมัติ');
+        let isPending = status.includes('รอ') || status.trim() === '';
+
+        if (isPaid) {
+          countPaid++; sumMoney += calculatedCost;
+          if (type.includes('VIP') || type.includes('วีไอพี')) {
+            vipCount++; if (mappedSize && sizeCount['VIP'][mappedSize] !== undefined) sizeCount['VIP'][mappedSize]++;
+          } else {
+            normalCount++; if (mappedSize && sizeCount['ทั่วไป'][mappedSize] !== undefined) sizeCount['ทั่วไป'][mappedSize]++;
+          }
+        } else if (isPending) countPending++;
+        
+        if (shirtCheck.includes('รับ') && !shirtCheck.includes('ไม่')) countShirt++; 
+      }
+
+      document.getElementById('statTotal').innerText = countTotal;
+      document.getElementById('statToday').innerText = countToday; 
+      document.getElementById('statPaid').innerText = countPaid;
+      document.getElementById('statPending').innerText = countPending;
+      document.getElementById('statShirt').innerText = countShirt;
+      document.getElementById('statMoney').innerText = sumMoney.toLocaleString('th-TH') + ' ฿';
+      document.getElementById('statVipCount').innerText = vipCount;
+      document.getElementById('statNormalCount').innerText = normalCount;
+
+      renderSizeSummary(sizeCount); renderTable(data);
+    } catch(err) { console.error(err); document.getElementById('tableBody').innerHTML = `<tr><td colspan="9" class="text-center py-4 text-danger fw-bold">ข้อผิดพลาดตาราง: ${err.message}</td></tr>`; }
+  }
+
+  function renderSizeSummary(sizeCount) {
+    let container = document.getElementById('sizeSummaryContainer'); let html = '';
+    const sizes = ['3S', '2S', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'];
+    const types = [ { name: 'VIP', color: 'primary', icon: 'crown' }, { name: 'ทั่วไป', color: 'success', icon: 'bicycle' } ];
+    for (let t of types) {
+      html += `<div class="col-md-6"><div class="size-box"><h6 class="fw-bold text-${t.color} mb-3"><i class="fa-solid fa-${t.icon} me-2"></i>ประเภท ${t.name}</h6><div class="d-flex flex-wrap">`;
+      for (let s of sizes) {
+        let count = (sizeCount[t.name] && sizeCount[t.name][s]) ? sizeCount[t.name][s] : 0;
+        let badgeClass = count > 0 ? `bg-${t.color}` : 'bg-secondary text-white-50';
+        html += `<div class="text-center mb-2 me-3"><span class="size-badge ${badgeClass}">${s}</span><div class="fw-bold fs-5">${count}</div></div>`;
+      }
+      html += `</div></div></div>`;
+    }
+    container.innerHTML = html;
+  }
+
+  function renderTable(data) {
+    const tbody = document.getElementById('tableBody'); tbody.innerHTML = ''; let hasActualData = false;
+    for (let i = 1; i < data.length; i++) {
+      let row = data[i];
+      let fnameCheck = (row[2] !== undefined && row[2] !== null) ? String(row[2]).trim() : "";
+      if (!row || !row[0] || String(row[0]).trim() === "" || fnameCheck === "") continue; 
+      hasActualData = true;
+
+      // แมปปิ้ง Index ให้ตรงกับข้อมูลที่กรอกเข้ามาใหม่
+      let timestamp = String(row[0]);
+      let status = row[23] ? String(row[23]).trim() : "รอตรวจสอบ";
+      let bib = row[24] ? String(row[24]) : "-";
+      let fullName = (row[1] || "") + (row[2] || "") + " " + (row[3] || "");
+      let phone = row[8] ? String(row[8]) : "-";
+      let type = row[19] ? String(row[19]) : "-";
+      let size = row[20] ? String(row[20]) : "-";
+      let shirtStatus = row[25] ? String(row[25]).trim() : "ยังไม่รับ";
+
+      let statusBadge = `<span class="badge bg-warning text-dark"><i class="fa-solid fa-hourglass-half"></i> ${status}</span>`;
+      if (status.includes('ชำระ') || status.includes('เรียบร้อย')) statusBadge = `<span class="badge bg-success"><i class="fa-solid fa-check-circle"></i> ${status}</span>`;
+      else if (status.includes('ยกเลิก') || status.includes('ไม่ผ่าน')) statusBadge = `<span class="badge bg-danger"><i class="fa-solid fa-times-circle"></i> ${status}</span>`;
+
+      let shirtBadge = `<span class="badge bg-secondary"><i class="fa-solid fa-shirt"></i> ${shirtStatus}</span>`;
+      if (shirtStatus.includes('รับ') && !shirtStatus.includes('ไม่')) shirtBadge = `<span class="badge bg-info text-dark"><i class="fa-solid fa-check"></i> ${shirtStatus}</span>`;
+
+      let tr = document.createElement('tr');
+      tr.innerHTML = `<td class="text-muted small">${timestamp}</td><td>${statusBadge}</td><td class="fw-bold text-primary fs-5">${bib}</td><td class="text-start">${fullName}</td><td>${phone}</td><td>${type}</td><td class="fw-bold">${size}</td><td>${shirtBadge}</td><td><button class="btn btn-primary btn-action" onclick="openModal(${i})"><i class="fa-solid fa-pen-to-square"></i> ตรวจ</button></td>`;
+      tbody.appendChild(tr);
+    }
+    if (!hasActualData) tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-muted">ยังไม่มีข้อมูลผู้สมัครในระบบ</td></tr>`;
+    filterTable();
+  }
+
+  function filterTable() {
+    let inputSearch = document.getElementById("searchInput").value.toLowerCase(), filterStatus = document.getElementById("filterStatus").value, filterType = document.getElementById("filterType").value, filterShirt = document.getElementById("filterShirt").value;
+    let rows = document.getElementById("tableBody").getElementsByTagName("tr");
+    for (let i = 0; i < rows.length; i++) {
+      let cells = rows[i].getElementsByTagName("td");
+      if (cells.length < 8) continue;
+      let rowText = rows[i].innerText.toLowerCase(), statusText = cells[1].innerText, typeText = cells[5].innerText, shirtText = cells[7].innerText;
+      let matchSearch = rowText.includes(inputSearch), matchStatus = filterStatus === "" || statusText.includes(filterStatus), matchType = filterType === "" || typeText.includes(filterType), matchShirt = filterShirt === "" || shirtText.includes(filterShirt);
+      rows[i].style.display = (matchSearch && matchStatus && matchType && matchShirt) ? "" : "none";
+    }
+  }
+
+  function openModal(index) {
+    const row = tableData[index];
+    document.getElementById('mRowIndex').value = index + 1; 
+    document.getElementById('mStatus').value = row[23] ? String(row[23]).trim() : 'รอตรวจสอบ';
+    document.getElementById('mBib').value = row[24] ? String(row[24]) : '';
+    document.getElementById('mPrefix').value = row[1] ? String(row[1]) : '';
+    document.getElementById('mFname').value = row[2] ? String(row[2]) : '';
+    document.getElementById('mLname').value = row[3] ? String(row[3]) : '';
+    let typeData = row[19] ? String(row[19]) : '';
+    document.getElementById('mType').value = typeData;
+    document.getElementById('mSize').value = row[20] ? String(row[20]) : '';
+    
+    let modalCost = (typeData.toUpperCase().includes('VIP') || typeData.toUpperCase().includes('วีไอพี')) ? 1000 : 500;
+    document.getElementById('mCost').value = modalCost.toLocaleString('th-TH') + ' บาท';
+    document.getElementById('mShirtStatus').value = row[25] ? String(row[25]).trim() : 'ยังไม่รับ';
+    document.getElementById('mCheckInStatus').value = row[26] ? String(row[26]).trim() : 'ยังไม่รายงานตัว';
+    
+    let slipData = row[22] ? String(row[22]).trim() : "";
+    let imgEl = document.getElementById('mSlipImage');
+    
+    if (slipData === "") imgEl.src = 'https://placehold.co/400x400?text=No+Slip+Found';
+    else if (slipData.startsWith('http')) {
+      let imageUrl = slipData.includes(',') ? slipData.split(',')[0].trim() : slipData;
+      let driveIdMatch = imageUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || imageUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) || imageUrl.match(/id=([a-zA-Z0-9_-]+)/);
+      imgEl.src = (driveIdMatch && driveIdMatch[1]) ? 'https://drive.google.com/thumbnail?id=' + driveIdMatch[1] + '&sz=w800' : imageUrl;
+    } else if (slipData.length > 50) {
+      imgEl.src = slipData.startsWith('data:image') ? slipData : 'data:image/png;base64,' + slipData;
+    } else imgEl.src = 'https://placehold.co/400x400?text=Invalid+Image+Data';
+
+    editModal.show();
+  }
+
+  async function saveData() {
+    const btn = document.getElementById('btnSave'); btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังบันทึก...';
+    const payload = {
+      action: 'updateRow', rowIdx: document.getElementById('mRowIndex').value, status: document.getElementById('mStatus').value, bib: document.getElementById('mBib').value,
+      prefix: document.getElementById('mPrefix').value, fname: document.getElementById('mFname').value, lname: document.getElementById('mLname').value,
+      type: document.getElementById('mType').value, size: document.getElementById('mSize').value, shirtStatus: document.getElementById('mShirtStatus').value, checkInStatus: document.getElementById('mCheckInStatus').value
+    };
+    try {
+      const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+      const res = await response.json();
+      if(res.status === 'success') { Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 1500, showConfirmButton: false }); editModal.hide(); loadData(); } 
+      else Swal.fire('ข้อผิดพลาด', res.message, 'error');
+    } catch (err) { Swal.fire('ข้อผิดพลาดเซิร์ฟเวอร์', err.message, 'error'); }
+    btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk me-2"></i> บันทึกข้อมูล';
+  }
+
+  function deleteData() {
+    Swal.fire({ title: 'ยืนยันการลบข้อมูล?', text: "การลบนี้จะไม่สามารถกู้คืนได้!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6', confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก' })
+    .then(async (result) => {
+      if (result.isConfirmed) {
+        const btn = document.getElementById('btnDelete'); btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังลบ...';
+        try {
+          const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteRow', rowIdx: document.getElementById('mRowIndex').value }) });
+          const res = await response.json();
+          if(res.status === 'success') { Swal.fire('ลบสำเร็จ!', 'ข้อมูลถูกลบเรียบร้อยแล้ว.', 'success'); editModal.hide(); loadData(); } 
+          else Swal.fire('เกิดข้อผิดพลาด', res.message, 'error');
+        } catch (err) { Swal.fire('ข้อผิดพลาดระบบ', err.message, 'error'); }
+        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-trash me-2"></i> ลบข้อมูลนี้';
+      }
+    });
+  }
+
+  function viewFullImage(src) { if (!src.includes('No+Slip')) Swal.fire({ imageUrl: src, imageWidth: '100%', imageAlt: 'Slip', showConfirmButton: true }); }
+  function logout() { Swal.fire({ title: 'ต้องการออกจากระบบ?', icon: 'question', showCancelButton: true, confirmButtonText: 'ใช่', cancelButtonText: 'ยกเลิก' }).then((result) => { if (result.isConfirmed) { sessionStorage.clear(); window.location.href = "login.html"; } }); }
+  
+  function exportToExcel() {
+    Swal.fire({ title: 'กำลังสร้างไฟล์ Excel...', text: 'กรุณารอสักครู่ ระบบกำลังรวบรวมข้อมูล', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+    setTimeout(() => { let wb = XLSX.utils.table_to_book(document.getElementById("dataTable"), {sheet: "ข้อมูลผู้สมัคร"}); let d = new Date(), dateStr = d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0"+d.getDate()).slice(-2); XLSX.writeFile(wb, "SURIN3_BIKE_Report_" + dateStr + ".xlsx"); Swal.close(); }, 800);
+  }
+  function exportToPDF() { window.print(); }
+</script>
+</body>
+</html>
