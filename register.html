@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ลงทะเบียนเข้าร่วมกิจกรรม - SURIN3 BIKE</title>
   
-  <!-- CSS Framework & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
@@ -174,9 +173,19 @@
     <div class="col-lg-10">
       <div class="form-container">
         
+        <div id="closedMessage" style="display: none;" class="text-center py-5">
+          <i class="fa-regular fa-calendar-xmark text-danger mb-4" style="font-size: 6rem;"></i>
+          <h2 class="text-danger fw-bold">ปิดระบบรับสมัครแล้ว</h2>
+          <p class="text-muted fs-5 mt-3">
+            กิจกรรม SURIN3 BIKE FOR STUDENTS #1 ได้สิ้นสุดระยะเวลาการเปิดรับสมัครแล้วในวันที่ 25 พฤษภาคม 2569<br>
+            ขอขอบพระคุณทุกท่านที่ให้ความสนใจและร่วมเป็นส่วนหนึ่งในการสนับสนุนการศึกษาครับ
+          </p>
+          <hr class="w-50 mx-auto my-4 text-muted">
+          <p class="text-secondary small">หากท่านสมัครไปแล้ว สามารถกดปุ่ม "ตรวจสอบสถานะและรับ BIB" ที่มุมขวาบนได้ตามปกติครับ</p>
+        </div>
+
         <form id="regForm" onsubmit="event.preventDefault(); validateAndSubmit();">
           
-          <!-- ส่วนที่ 1: ข้อมูลส่วนบุคคล -->
           <h4 class="section-title"><i class="fa-solid fa-user me-2"></i>ส่วนที่ 1: ข้อมูลส่วนบุคคล</h4>
           <div class="row g-3">
             
@@ -202,7 +211,6 @@
               <input type="text" class="form-control req-field" id="lastName" placeholder="กรอกนามสกุล">
             </div>
             
-            <!-- 🚨 เปลี่ยนเป็นระบบ Dropdown 3 ช่องแล้ว 🚨 -->
             <div class="col-md-6">
               <label class="form-label">วัน/เดือน/ปีเกิด <span class="text-danger">*</span></label>
               <div class="input-group">
@@ -235,7 +243,6 @@
             
           </div>
 
-          <!-- ส่วนที่ 2: ที่อยู่ติดต่อ -->
           <h4 class="section-title"><i class="fa-solid fa-house-chimney me-2"></i>ส่วนที่ 2: ข้อมูลที่อยู่ติดต่อ</h4>
           <div class="row g-3">
             <div class="col-md-3"><label class="form-label">บ้านเลขที่ <span class="text-danger">*</span></label><input type="text" class="form-control req-field" id="houseNo" placeholder="หากไม่มีให้ใส่ -"></div>
@@ -246,7 +253,6 @@
             <div class="col-md-4"><label class="form-label">จังหวัด <span class="text-danger">*</span></label><input type="text" class="form-control req-field" id="province" value="สุรินทร์"></div>
           </div>
 
-          <!-- ส่วนที่ 3: ข้อมูลฉุกเฉินและสุขภาพ -->
           <h4 class="section-title"><i class="fa-solid fa-heart-pulse me-2"></i>ส่วนที่ 3: ข้อมูลติดต่อฉุกเฉินและสุขภาพ</h4>
           <div class="row g-3">
             <div class="col-12">
@@ -268,7 +274,6 @@
             <div class="col-md-4"><label class="form-label">เบอร์โทรติดต่อฉุกเฉิน <span class="text-danger">*</span></label><input type="tel" class="form-control req-field" id="emergencyPhone" maxlength="10"></div>
           </div>
 
-          <!-- ส่วนที่ 4: ประเภทกิจกรรมและเสื้อ -->
           <h4 class="section-title"><i class="fa-solid fa-shirt me-2"></i>ส่วนที่ 4: ประเภทกิจกรรมและเสื้อ</h4>
           <div class="row g-3">
             <div class="col-md-6">
@@ -303,7 +308,6 @@
             </div>
           </div>
 
-          <!-- ส่วนที่ 5: อัปโหลดเอกสาร -->
           <h4 class="section-title"><i class="fa-solid fa-file-arrow-up me-2"></i>ส่วนที่ 5: อัปโหลดเอกสาร</h4>
           <div class="row g-3">
             <div class="col-md-6">
@@ -314,7 +318,6 @@
             <div class="col-md-6" id="paymentSection">
               <div class="qr-box">
                 <h6 class="fw-bold text-primary mb-3"><i class="fa-solid fa-qrcode me-2"></i>สแกนเพื่อชำระเงินค่าลงทะเบียน</h6>
-                <!-- 🔴 นำลิงก์รูป QR Code สพป.สุรินทร์ เขต 3 มาใส่ตรงนี้ -->
                 <img src="S__1732117961.jpg" alt="QR Code ชำระเงิน" style="width: 150px; max-width: 100%; border-radius: 8px;">
                 <div class="mt-2 text-dark small fw-bold">ธนาคาร: กรุงไทย<br>ชื่อบัญชี: ปั่นเพื่อน้อง สพป.สุรินทร์ เขต 3<br>เพื่อความถูกต้องและรวดเร็วโปรดชำระผ่าน QR Code </div>
               </div>
@@ -323,7 +326,6 @@
             </div>
           </div>
 
-          <!-- ส่วนที่ 6: การยินยอม -->
           <div class="consent-box">
             <input type="checkbox" class="consent-checkbox" id="consent">
             <div>
@@ -344,7 +346,6 @@
   </div>
 </div>
 
-<!-- 🚨 หน้าต่าง Modal สำหรับตรวจสอบสถานะและรับ BIB 🚨 -->
 <div class="modal fade" id="checkBibModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg">
@@ -389,13 +390,27 @@
   </div>
 </div>
 
-<!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
+  // 🚨 ระบบตรวจสอบเวลาปิดรับสมัครอัตโนมัติ (ขยายเวลาถึง 25 พ.ค. 2569 เวลา 23:59:59) 🚨
+  function checkRegistrationDeadline() {
+    const deadline = new Date(2026, 4, 25, 23, 59, 59); // เดือน 4 ใน JavaScript คือเดือนพฤษภาคม (เริ่มนับที่ 0)
+    const now = new Date();
+    
+    // ถ้าเวลาปัจจุบัน เกินเวลาที่กำหนดไว้
+    if (now > deadline) {
+      document.getElementById('regForm').style.display = 'none'; // ซ่อนฟอร์ม
+      document.getElementById('closedMessage').style.display = 'block'; // แสดงข้อความปิดรับสมัคร
+    }
+  }
+  
+  // เรียกใช้งานฟังก์ชันตรวจเช็คเวลาทันทีที่โหลดหน้าเว็บ
+  checkRegistrationDeadline();
+
   // 🚨 ลิงก์ API ของคุณนคร 🚨
   const API_URL = "https://script.google.com/macros/s/AKfycbwwQNmRdCNc5RX_Odpk2fjs_F8GaLzSI7Ysb5MuCwKMEuX6WXQTz5MkzHiVHcdw_AoV/exec";
 
